@@ -24,13 +24,19 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Set up Python 3.10.7
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.10.7
+      - name: Install dependencies
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Coverage report
+        run: |
+          pip install coverage
+          coverage run ./backend/manage.py test
+          coverage report
+      - name: Django testing
+        run: |
+          python3 -m unittest -v
