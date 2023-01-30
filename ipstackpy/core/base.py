@@ -45,13 +45,19 @@ class BaseClient:
         """Cheks if the request is sucess"""
         return response_data.get('success', True)
     
-    def __retry_request(self, method: str, url: str, **kwargs) -> Response | Any:
+    def __retry_request(
+        self, 
+        method: str, 
+        url: str, 
+        params: Mapping, 
+        **kwargs
+    ) -> Response | Any:
         """
         The method implements a retry of the request, but calls "request" method 
         with "force" argument set to True, and only raises exception if status code 
         is not within the range between 200 and 300.
         """
-        response = self.request(method, url, force=True, **kwargs)
+        response = self.request(method, url, force=True, params=params, **kwargs)
         if 200 <= response.status_code < 300:
             return response
 
@@ -64,6 +70,7 @@ class BaseClient:
         method: str, 
         url: str,
         force: bool = False,
+        params: Mapping = None,
         **kwargs
     ) -> dict | Response | Any:
         """
@@ -71,20 +78,21 @@ class BaseClient:
         It then checks the response status and retries the request if necessary. Upon successful response,
         it returns the data. If a bad response is received, it raises an error.
         """
+        params = params if params else dict()
         if not self.__isallow_method(method) and not force:
             err_text = f'Method: {method} not allowed.\nAllow methods: {",".join(self.allow_methods)}'
             logging.error(err_text)
             raise MethodNotAllowed(err_text)
-
-        kwargs['access_key'] = self.access_key
-        response = self._session.request(method, url, params=kwargs)
+        
+        params['access_key'] = self.access_key
+        response = self._session.request(method, url, params=params, **kwargs)
 
         if force:
             return response
         
         if 500 <= response.status_code < 600:
             logging.warning(f'Bad response from server. Retry request to {url}')
-            response = self.__retry_request(method, url, **kwargs)
+            response = self.__retry_request(method, url, params)
         
         try:
             body = response.json()
@@ -108,12 +116,11 @@ class BaseClient:
         logging.error(f'Response: [{code}] | {message}')
         raise APIError(f'Response: [{code}] | {message}')
 
-    def get(self, endpoint: str, params: Mapping = None) -> dict:
+    def get(self, endpoint: str, params: Mapping = None, **kwargs) -> dict:
         """ GET request by endpoint. """
         method = 'GET'
         url = self.base_url + endpoint
-        params = params if params else dict()
-        return self.request(method, url, **params)
+        return self.request(method, url, params, **kwargs)
     
     def close(self) -> None:
         self._session.close()
