@@ -72,5 +72,3 @@ class StandardResponse(BaseModel):
     currency: Currency = None
     connection: Connection = None
     security: Security = None
-
-
