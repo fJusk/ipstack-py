@@ -100,8 +100,9 @@ class BaseClient:
                 return body
             
             try:
-                code = body['code']
-                message = body['info']
+                error = body['error']
+                code = error['code']
+                message = error['info']
 
             except KeyError:
                 logging.error('Cant get values from dict')
