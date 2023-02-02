@@ -13,7 +13,7 @@ from .exceptions import MethodNotAllowed, APIError
 class BaseClient:
 
     allow_methods = ['GET']
-    base_url = 'https://api.ipstack.com' 
+    base_url = 'http://api.ipstack.com' 
 
     def __init__(
         self,

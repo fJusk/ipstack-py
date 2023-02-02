@@ -54,7 +54,7 @@ class Security(BaseModel):
 
 class StandardResponse(BaseModel):
     ip: str
-    hostname: str
+    hostname: str = None
     type: str
     continent_code: str
     continent_name: str
