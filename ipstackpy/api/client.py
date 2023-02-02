@@ -18,7 +18,7 @@ class IpStackClient(BaseClient):
     ) -> None:
         if session is None:
             session = Session()
-        
+
         super().__init__(session, access_key, base_url)
 
     def __generate_endpoint(self, query: Iterable[str] | str) -> str:
@@ -41,7 +41,7 @@ class IpStackClient(BaseClient):
     def bulk_lookup(
         self,
         ip_addresses: List[str],
-        params: Mapping | dict,
+        params: Mapping | dict = None,
         **kwargs
     ) -> Iterable[StandardResponse]:
         endpoint = self.__generate_endpoint(ip_addresses)
