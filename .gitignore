@@ -110,6 +110,9 @@ ENV/
 env.bak/
 venv.bak/
 
+# drafts
+*draft.py
+
 # Spyder project settings
 .spyderproject
 .spyproject
