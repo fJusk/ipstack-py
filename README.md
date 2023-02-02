@@ -37,7 +37,7 @@ Here is an example of using the client:
   ips = [ '138.213.0.0', '194.105.0.0', '156.023.0.0' ]
   
   # request to API
-  search_results = client.lookup(ips)
+  search_results = client.bulk_lookup(ips)
   
   # print results
   for result in search_results:
